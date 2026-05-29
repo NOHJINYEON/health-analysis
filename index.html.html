@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>무료 건강검진 분석 | 노진연 설계사</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;
+  --blue:#2563eb;
+  --green:#059669;
+  --purple:#7c3aed;
+  --gold:#f59e0b;
+  --text:#1a1a2e;
+  --text2:#6b7280;
+  --border:#e5e7eb;
+  --bg:#f8fafc;
+  --white:#ffffff;
+  --radius:14px;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem}
+
+/* 헤더 */
+.hero{background:var(--navy);padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(37,99,235,0.25) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(124,58,237,0.2) 0%,transparent 50%)}
+.hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.05) 1px,transparent 1px);background-size:28px 28px}
+.hero-inner{position:relative;z-index:1;max-width:480px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(5,150,105,0.2);border:1px solid rgba(5,150,105,0.4);color:#34d399;font-size:12px;padding:5px 14px;border-radius:20px;margin-bottom:1rem}
+.hero-name{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:8px 16px;margin-bottom:1.25rem}
+.hero-name span{color:#fff;font-size:13px;font-weight:500}
+.hero-name small{color:rgba(255,255,255,0.45);font-size:11px}
+.hero h1{color:#fff;font-size:26px;font-weight:700;line-height:1.35;margin-bottom:.75rem}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#34d399,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:rgba(255,255,255,0.65);font-size:14px;line-height:1.7}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:2rem}
+.hstat{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:.9rem;text-align:center}
+.hstat-n{font-size:18px;font-weight:700;color:#34d399}
+.hstat-l{font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px}
+
+/* 컨테이너 */
+.container{max-width:560px;margin:0 auto;padding:0 1.25rem}
+
+/* 카드 */
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-top:1.5rem;box-shadow:var(--shadow)}
+.card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:.25rem;display:flex;align-items:center;gap:8px}
+.card-sub{font-size:12px;color:var(--text2);margin-bottom:1.25rem}
+
+/* 탭 */
+.tab-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.tab-card{border:2px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
+.tab-card:hover{border-color:var(--blue)}
+.tab-card.active{border-color:var(--blue);background:rgba(37,99,235,0.04)}
+.tab-icon{font-size:22px;margin-bottom:6px;color:var(--text2);transition:color .2s}
+.tab-card.active .tab-icon{color:var(--blue)}
+.tab-t{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.tab-d{font-size:11px;color:var(--text2);line-height:1.4}
+.tab-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;margin-top:5px}
+.tb-g{background:rgba(5,150,105,0.1);color:var(--green);border:1px solid rgba(5,150,105,0.2)}
+.tb-b{background:rgba(37,99,235,0.1);color:var(--blue);border:1px solid rgba(37,99,235,0.2)}
+
+/* 프로그레스 */
+.progress{height:3px;background:#f1f5f9;border-radius:3px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;transition:width .5s}
+
+/* 섹션 */
+.form-section{display:none}
+.form-section.active{display:block}
+
+/* 필드 */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px}
+.field-req{color:#ef4444;font-size:12px}
+.field input,.field textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Noto Sans KR',sans-serif;color:var(--text);outline:none;transition:border-color .2s;background:var(--white)}
+.field input:focus,.field textarea:focus{border-color:var(--blue)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field-hint{font-size:11px;color:var(--text2);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* 라디오 */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;color:var(--text);background:var(--white);transition:all .2s;user-select:none}
+.radio-btn.sel{border-color:var(--blue);background:rgba(37,99,235,0.06);color:var(--blue)}
+.rdot{width:13px;height:13px;border-radius:50%;border:1.5px solid #d1d5db;transition:all .2s;flex-shrink:0}
+.radio-btn.sel .rdot{border-color:var(--blue);background:var(--blue)}
+
+/* 업로드 */
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:1.75rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--white)}
+.upload-zone:hover{border-color:var(--blue);background:rgba(37,99,235,0.02)}
+.upload-zone.done{border-color:var(--green);background:rgba(5,150,105,0.03)}
+.upload-icon{font-size:36px;color:var(--text2);margin-bottom:8px;display:block}
+.upload-zone.done .upload-icon{color:var(--green)}
+.upload-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.upload-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.fmt-row{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.fmt{font-size:10px;padding:3px 10px;border-radius:8px;background:#f1f5f9;color:var(--text2);border:1px solid var(--border)}
+.file-info{display:none;background:#f8fafc;border-radius:10px;padding:10px 14px;margin-top:10px;align-items:center;gap:10px;border:1px solid var(--border)}
+.file-info.show{display:flex}
+.file-icon{width:34px;height:34px;border-radius:8px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.file-name{font-size:13px;font-weight:500;color:var(--text);word-break:break-all}
+.file-size{font-size:11px;color:var(--text2);margin-top:2px}
+.file-rm{margin-left:auto;background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px}
+
+/* 이미지 미리보기 */
+.img-preview{display:none;margin-top:10px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.img-preview.show{display:block}
+.img-preview img{width:100%;max-height:180px;object-fit:contain;background:#f8fafc}
+
+/* 구분선 */
+.sec-div{font-size:12px;font-weight:500;color:var(--text2);margin:1rem 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* 안내박스 */
+.info-box{border-radius:10px;padding:10px 14px;margin-bottom:1.25rem;font-size:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.ib-g{background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.2);color:var(--green)}
+.ib-b{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);color:var(--blue)}
+
+/* 버튼 */
+.submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1.25rem}
+.submit-btn:hover{opacity:.92}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* 로딩 */
+.loading-card{display:none;background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;text-align:center;margin-top:1.5rem;box-shadow:var(--shadow)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+.loading-step{font-size:13px;font-weight:500;color:var(--text)}
+.loading-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.loading-steps-list{display:flex;flex-direction:column;gap:8px;margin-top:1.25rem;text-align:left}
+.ls-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:12px}
+.ls-done{background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.2);color:var(--green)}
+.ls-active{background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.2);color:var(--blue)}
+.ls-wait{background:#f8fafc;border:1px solid var(--border);color:var(--text2)}
+
+/* 결과 */
+.result-wrap{display:none;margin-top:1.5rem}
+.result-hero{background:var(--navy);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.result-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(16,185,129,0.15) 0%,transparent 65%)}
+.result-inner{position:relative;z-index:1}
+.age-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:1rem}
+.age-box{border-radius:12px;padding:.9rem 1.1rem;text-align:center;min-width:88px}
+.ab-blue{background:linear-gradient(135deg,#1e3a8a,var(--blue))}
+.ab-purple{background:linear-gradient(135deg,#4c1d95,var(--purple))}
+.age-n{font-size:24px;font-weight:700;color:#fff}
+.age-l{font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px}
+.diff-badge{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:#f87171}
+.organ-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.organ-box{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 4px;text-align:center}
+.org-n{font-size:14px;font-weight:700;color:#fff}
+.org-l{font-size:9px;color:rgba(255,255,255,0.55);margin-top:2px}
+.org-s{font-size:9px;padding:1px 6px;border-radius:6px;margin-top:3px;display:inline-block}
+.os-g{background:rgba(16,185,129,0.2);color:#34d399}
+.os-b{background:rgba(239,68,68,0.2);color:#f87171}
+.os-vb{background:rgba(220,38,38,0.25);color:#fca5a5}
+
+.result-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:1.25rem;margin-bottom:1rem;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.rc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.9rem;display:flex;align-items:center;gap:6px}
+
+/* 바 */
+.dis-list{display:flex;flex-direction:column;gap:9px}
+.dis-row{display:flex;align-items:center;gap:8px}
+.dis-name{font-size:12px;font-weight:500;color:var(--text);width:80px;flex-shrink:0}
+.dis-track{height:7px;background:#f1f5f9;border-radius:7px;overflow:hidden;flex:1}
+.dis-fill{height:100%;border-radius:7px;transition:width 1.2s ease;width:0}
+.df-r{background:linear-gradient(90deg,#dc2626,#f87171)}
+.df-o{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.df-b{background:linear-gradient(90deg,var(--blue),#60a5fa)}
+.df-g{background:linear-gradient(90deg,var(--green),#34d399)}
+.dis-badge{font-size:10px;padding:2px 7px;border-radius:7px;white-space:nowrap;flex-shrink:0}
+.db-r{background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.2)}
+.db-o{background:rgba(245,158,11,0.1);color:#d97706;border:1px solid rgba(245,158,11,0.2)}
+.db-b{background:rgba(37,99,235,0.1);color:var(--blue);border:1px solid rgba(37,99,235,0.2)}
+.db-g{background:rgba(5,150,105,0.1);color:var(--green);border:1px solid rgba(5,150,105,0.2)}
+
+.cancer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.cc{background:#f8fafc;border-radius:10px;padding:10px 12px;border:1px solid var(--border)}
+.cc-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:5px}
+.cc-track{height:5px;background:#e5e7eb;border-radius:5px;overflow:hidden;margin-bottom:4px}
+.cc-fill{height:100%;border-radius:5px;transition:width 1.2s ease;width:0}
+
+.cost-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cost-c{background:#f8fafc;border-radius:10px;padding:10px;text-align:center;border:1px solid var(--border)}
+.cost-l{font-size:10px;color:var(--text2);margin-bottom:3px}
+.cost-n{font-size:13px;font-weight:700;color:var(--text)}
+.cost-a{font-size:10px;color:var(--text2);margin-top:2px}
+
+.rec-list{display:flex;flex-direction:column;gap:8px}
+.rec-item{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:#f8fafc;border-radius:10px;border-left:3px solid var(--blue)}
+.rec-icon{color:var(--blue);font-size:16px;flex-shrink:0;margin-top:1px}
+.rec-text{font-size:12px;color:var(--text);line-height:1.6}
+
+/* 카카오 CTA */
+.kakao-cta{background:var(--navy);border-radius:var(--radius);padding:1.75rem;text-align:center;margin-bottom:1rem;box-shadow:var(--shadow)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.kakao-btn{display:inline-flex;align-items:center;gap:10px;background:#FEE500;color:#191919;border:none;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;animation:pulse 2.5s ease infinite;transition:transform .15s;margin-top:1rem}
+.kakao-btn:hover{transform:scale(1.04)}
+
+/* 성공박스 */
+.success-wrap{display:none;background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:2rem;text-align:center;margin-top:1.5rem;box-shadow:var(--shadow)}
+@keyframes checkPop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.check-icon{font-size:48px;color:var(--green);animation:checkPop .4s ease forwards}
+.success-title{font-size:18px;font-weight:700;color:var(--text);margin:12px 0 6px}
+.success-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:1.25rem}
+</style>
+</head>
+<body>
+
+<!-- 히어로 -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🤖 AI 건강검진 정밀 분석</div>
+    <div class="hero-name">
+      <span>노진연 설계사</span>
+      <small>| 에즈금융서비스 한결지점</small>
+    </div>
+    <h1>건강검진 결과로<br><em>생체나이·암·질병 위험도 분석</em></h1>
+    <p>건강검진 확인서를 사진/PDF로 올리거나<br>설문을 작성하면 AI가 즉시 분석해 드립니다</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">10종</div><div class="hstat-l">암 위험도</div></div>
+      <div class="hstat"><div class="hstat-n">9종</div><div class="hstat-l">질병 위험도</div></div>
+      <div class="hstat"><div class="hstat-n">100%</div><div class="hstat-l">무료 서비스</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- 폼 카드 -->
+<div class="card">
+  <div class="card-title">📋 건강검진 분석 신청</div>
+  <div class="card-sub">건강검진 확인서가 있으신가요? 아래에서 선택해 주세요</div>
+
+  <div class="tab-grid">
+    <div class="tab-card active" id="tab1" onclick="switchTab(1)">
+      <div class="tab-icon">📄</div>
+      <div class="tab-t">검진서 있어요</div>
+      <div class="tab-d">PDF 또는 사진으로<br>바로 업로드하세요</div>
+      <div class="tab-badge tb-g">정밀 분석</div>
+    </div>
+    <div class="tab-card" id="tab2" onclick="switchTab(2)">
+      <div class="tab-icon">✏️</div>
+      <div class="tab-t">검진서 없어요</div>
+      <div class="tab-d">간단한 설문으로<br>기본 분석을 받아보세요</div>
+      <div class="tab-badge tb-b">설문 분석</div>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="prog" style="width:10%"></div></div>
+
+  <!-- 업로드 섹션 -->
+  <div class="form-section active" id="sec1">
+    <div class="info-box ib-g">✅ 건강검진 확인서(PDF 또는 사진)를 올려주시면 AI가 수치를 자동으로 읽어 분석합니다. 직접 입력 불필요!</div>
+    <div class="grid2">
+      <div class="field"><label>이름 <span class="field-req">*</span></label><input id="u-name" placeholder="홍길동" oninput="updateProg()"/></div>
+      <div class="field"><label>연락처 <span class="field-req">*</span></label><input id="u-phone" placeholder="010-0000-0000" oninput="updateProg()"/></div>
+    </div>
+    <div class="field">
+      <label>건강검진 확인서 업로드 <span class="field-req">*</span></label>
+      <div class="upload-zone" id="upload-zone"
+        onclick="document.getElementById('file-input').click()"
+        ondragover="ev(event,'over')" ondragleave="ev(event,'leave')" ondrop="ev(event,'drop')">
+        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.heic" style="display:none" onchange="handleFile(event)"/>
+        <div id="upload-ph">
+          <span class="upload-icon">☁️</span>
+          <div class="upload-title">클릭 또는 파일을 여기에 끌어다 놓으세요</div>
+          <div class="upload-desc">건강검진 결과지 · 확인서 · 검진 내역서<br>AI가 수치를 자동으로 읽어드려요</div>
+          <div class="fmt-row">
+            <span class="fmt">PDF</span><span class="fmt">JPG</span><span class="fmt">PNG</span><span class="fmt">HEIC (아이폰)</span>
+          </div>
+        </div>
+        <div id="upload-done" style="display:none">
+          <span class="upload-icon" style="color:var(--green)">✅</span>
+          <div class="upload-title" style="color:var(--green)">파일 업로드 완료!</div>
+          <div class="upload-desc">다른 파일로 바꾸려면 클릭하세요</div>
+        </div>
+      </div>
+      <div class="file-info" id="file-info">
+        <div class="file-icon">📄</div>
+        <div><div class="file-name" id="fn"></div><div class="file-size" id="fs"></div></div>
+        <button class="file-rm" onclick="removeFile(event)">✕</button>
+      </div>
+      <div class="img-preview" id="img-prev"><img id="img-el" src="" alt="미리보기"/></div>
+    </div>
+    <div class="field"><label>추가 메모 (선택)</label><textarea id="u-memo" placeholder="예: 최근 피로감이 심해요, 가족 중 당뇨 있어요, 흡연 중입니다..."></textarea></div>
+  </div>
+
+  <!-- 설문지 섹션 -->
+  <div class="form-section" id="sec2">
+    <div class="info-box ib-b">ℹ️ 건강검진 확인서가 없어도 괜찮아요! 아래 설문을 작성해 주시면 기본 분석을 받아보실 수 있어요</div>
+    <div class="grid2">
+      <div class="field"><label>이름 <span class="field-req">*</span></label><input id="s-name" placeholder="홍길동" oninput="updateProg()"/></div>
+      <div class="field"><label>연락처 <span class="field-req">*</span></label><input id="s-phone" placeholder="010-0000-0000" oninput="updateProg()"/></div>
+      <div class="field"><label>나이 <span class="field-req">*</span></label><input id="s-age" type="number" placeholder="46" oninput="updateProg()"/></div>
+      <div class="field"><label>성별 <span class="field-req">*</span></label><div class="radio-group"><div class="radio-btn" id="s-m" onclick="selG('m')"><div class="rdot"></div>남</div><div class="radio-btn" id="s-f" onclick="selG('f')"><div class="rdot"></div>여</div></div></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>키 (cm)</label><input id="s-h" type="number" placeholder="170" oninput="updateProg()"/></div>
+      <div class="field"><label>몸무게 (kg)</label><input id="s-w" type="number" placeholder="70" oninput="updateProg()"/></div>
+    </div>
+    <div class="sec-div">건강 상태 체크</div>
+    <div class="field"><label>혈압이 높다는 말을 들어보셨나요?</label><div class="radio-group"><div class="radio-btn" id="q-bp-y" onclick="selQ('bp','y')"><div class="rdot"></div>네</div><div class="radio-btn" id="q-bp-n" onclick="selQ('bp','n')"><div class="rdot"></div>아니오</div><div class="radio-btn" id="q-bp-u" onclick="selQ('bp','u')"><div class="rdot"></div>모름</div></div></div>
+    <div class="field"><label>당뇨 진단을 받으셨거나 혈당이 높나요?</label><div class="radio-group"><div class="radio-btn" id="q-dm-y" onclick="selQ('dm','y')"><div class="rdot"></div>네</div><div class="radio-btn" id="q-dm-n" onclick="selQ('dm','n')"><div class="rdot"></div>아니오</div><div class="radio-btn" id="q-dm-u" onclick="selQ('dm','u')"><div class="rdot"></div>모름</div></div></div>
+    <div class="field"><label>콜레스테롤이 높다는 말을 들어보셨나요?</label><div class="radio-group"><div class="radio-btn" id="q-ch-y" onclick="selQ('ch','y')"><div class="rdot"></div>네</div><div class="radio-btn" id="q-ch-n" onclick="selQ('ch','n')"><div class="rdot"></div>아니오</div><div class="radio-btn" id="q-ch-u" onclick="selQ('ch','u')"><div class="rdot"></div>모름</div></div></div>
+    <div class="field"><label>흡연 여부</label><div class="radio-group"><div class="radio-btn" id="q-sm-y" onclick="selQ('sm','y')"><div class="rdot"></div>흡연</div><div class="radio-btn" id="q-sm-n" onclick="selQ('sm','n')"><div class="rdot"></div>비흡연</div><div class="radio-btn" id="q-sm-q" onclick="selQ('sm','q')"><div class="rdot"></div>금연</div></div></div>
+    <div class="field"><label>음주 빈도</label><div class="radio-group"><div class="radio-btn" id="q-dr-n" onclick="selQ('dr','n')"><div class="rdot"></div>안 마심</div><div class="radio-btn" id="q-dr-m" onclick="selQ('dr','m')"><div class="rdot"></div>월 1~3회</div><div class="radio-btn" id="q-dr-w" onclick="selQ('dr','w')"><div class="rdot"></div>주 1~2회</div><div class="radio-btn" id="q-dr-d" onclick="selQ('dr','d')"><div class="rdot"></div>거의 매일</div></div></div>
+    <div class="field"><label>가족력 (해당 모두 선택)</label><div class="radio-group" style="flex-wrap:wrap"><div class="radio-btn fam" onclick="toggleFam(this,'암')"><div class="rdot"></div>암</div><div class="radio-btn fam" onclick="toggleFam(this,'심장질환')"><div class="rdot"></div>심장질환</div><div class="radio-btn fam" onclick="toggleFam(this,'당뇨')"><div class="rdot"></div>당뇨</div><div class="radio-btn fam" onclick="toggleFam(this,'고혈압')"><div class="rdot"></div>고혈압</div><div class="radio-btn fam" onclick="toggleFam(this,'없음')"><div class="rdot"></div>없음</div></div></div>
+    <div class="field"><label>추가 메모 (선택)</label><textarea id="s-memo" placeholder="걱정되는 증상이나 특이사항을 자유롭게 적어주세요"></textarea></div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="startAnalysis()">🧠 AI 정밀 분석 시작하기</button>
+</div>
+
+<!-- 로딩 -->
+<div class="loading-card" id="loading-card">
+  <div class="spinner"></div>
+  <div class="loading-step" id="loading-text">건강 데이터 분석 중...</div>
+  <div class="loading-sub">메디에이지 기준으로 생체나이, 질병·암 위험도를 계산하고 있어요</div>
+  <div class="loading-steps-list">
+    <div class="ls-item ls-done" id="ls1">✅ 파일 읽기 완료</div>
+    <div class="ls-item ls-active" id="ls2">⏳ 수치 추출 및 분석 중...</div>
+    <div class="ls-item ls-wait" id="ls3">⏸ 질병·암 위험도 산출 대기</div>
+    <div class="ls-item ls-wait" id="ls4">⏸ 보장 추천 생성 대기</div>
+  </div>
+</div>
+
+<!-- 결과 -->
+<div class="result-wrap" id="result-wrap"></div>
+
+<!-- 성공 (설문 모드) -->
+<div class="success-wrap" id="success-wrap">
+  <div class="check-icon">✅</div>
+  <div class="success-title">신청이 완료되었습니다!</div>
+  <div class="success-desc">노진연 설계사가 확인 후<br><strong>1~2일 내 카카오톡 또는 연락처</strong>로 결과를 안내드립니다.</div>
+  <a href="http://pf.kakao.com/_NSIxjX/chat" target="_blank">
+    <button class="kakao-btn">💬 노진연 설계사와 상담하기</button>
+  </a>
+</div>
+
+</div><!-- /container -->
+
+<script>
+var curTab=1,gender='',fams=[],qA={};
+var uploadedFile=null,uploadedB64=null,uploadedType=null;
+
+function switchTab(n){
+  curTab=n;
+  document.getElementById('tab1').className='tab-card'+(n===1?' active':'');
+  document.getElementById('tab2').className='tab-card'+(n===2?' active':'');
+  document.getElementById('sec1').className='form-section'+(n===1?' active':'');
+  document.getElementById('sec2').className='form-section'+(n===2?' active':'');
+  updateProg();
+}
+function selG(g){gender=g;['m','f'].forEach(function(x){document.getElementById('s-'+x).className='radio-btn'+(g===x?' sel':'');});updateProg();}
+function selQ(k,v){qA[k]=v;['y','n','u','q','m','w','d'].forEach(function(x){var el=document.getElementById('q-'+k+'-'+x);if(el)el.className='radio-btn'+(v===x?' sel':'');});updateProg();}
+function toggleFam(el,v){var i=fams.indexOf(v);if(i>-1){fams.splice(i,1);el.className='radio-btn fam';}else{fams.push(v);el.className='radio-btn fam sel';}}
+function ev(e,type){e.preventDefault();var z=document.getElementById('upload-zone');if(type==='over')z.classList.add('dragging');else if(type==='leave')z.classList.remove('dragging');else if(type==='drop'){z.classList.remove('dragging');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0]);}}
+function handleFile(e){if(e.target.files&&e.target.files[0])processFile(e.target.files[0]);}
+function processFile(file){
+  uploadedFile=file;
+  var z=document.getElementById('upload-zone');
+  z.classList.add('done');
+  document.getElementById('upload-ph').style.display='none';
+  document.getElementById('upload-done').style.display='block';
+  var fi=document.getElementById('file-info');fi.className='file-info show';
+  document.getElementById('fn').textContent=file.name;
+  document.getElementById('fs').textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  var r=new FileReader();
+  var isImg=file.type.indexOf('image')>-1;
+  r.onload=function(e){
+    uploadedB64=e.target.result.split(',')[1];
+    uploadedType=isImg?file.type:'application/pdf';
+    if(isImg){document.getElementById('img-el').src=e.target.result;document.getElementById('img-prev').className='img-preview show';}
+  };
+  r.readAsDataURL(file);
+  updateProg();
+}
+function removeFile(e){
+  e.stopPropagation();
+  uploadedFile=null;uploadedB64=null;uploadedType=null;
+  var z=document.getElementById('upload-zone');z.classList.remove('done');
+  document.getElementById('upload-ph').style.display='block';
+  document.getElementById('upload-done').style.display='none';
+  document.getElementById('file-info').className='file-info';
+  document.getElementById('img-prev').className='img-preview';
+  document.getElementById('file-input').value='';
+  updateProg();
+}
+function updateProg(){
+  var p=10;
+  if(curTab===1){
+    if(document.getElementById('u-name').value)p+=30;
+    if(document.getElementById('u-phone').value)p+=30;
+    if(uploadedFile)p+=30;
+  }else{
+    if(document.getElementById('s-name').value)p+=20;
+    if(document.getElementById('s-phone').value)p+=20;
+    if(document.getElementById('s-age').value)p+=15;
+    if(gender)p+=15;
+    if(Object.keys(qA).length>2)p+=10;
+    if(Object.keys(qA).length>4)p+=10;
+  }
+  document.getElementById('prog').style.width=Math.min(p,95)+'%';
+}
+document.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',updateProg);});
+
+function startAnalysis(){
+  var isT1=curTab===1;
+  var name=isT1?document.getElementById('u-name').value:document.getElementById('s-name').value;
+  var phone=isT1?document.getElementById('u-phone').value:document.getElementById('s-phone').value;
+  if(!name||!phone){alert('이름과 연락처를 입력해 주세요.');return;}
+  if(isT1&&!uploadedFile){alert('건강검진 확인서 파일을 업로드해 주세요.');return;}
+  if(!isT1&&(!document.getElementById('s-age').value||!gender)){alert('나이와 성별을 입력해 주세요.');return;}
+
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('loading-card').style.display='block';
+  document.getElementById('result-wrap').style.display='none';
+  document.getElementById('success-wrap').style.display='none';
+  document.getElementById('loading-card').scrollIntoView({behavior:'smooth'});
+
+  var msgs=['파일 분석 중...','수치 자동 추출 중...','생체나이 계산 중...','질병 위험도 산출 중...','암 위험도 분석 중...','의료비 예측 중...','보장 부분 체크 중...'];
+  var mi=0;
+  var iv=setInterval(function(){mi=(mi+1)%msgs.length;document.getElementById('loading-text').textContent=msgs[mi];
+    if(mi===2){document.getElementById('ls2').className='ls-item ls-done';document.getElementById('ls2').textContent='✅ 수치 추출 완료';document.getElementById('ls3').className='ls-item ls-active';document.getElementById('ls3').textContent='⏳ 질병·암 위험도 산출 중...';}
+    if(mi===5){document.getElementById('ls3').className='ls-item ls-done';document.getElementById('ls3').textContent='✅ 질병·암 위험도 완료';document.getElementById('ls4').className='ls-item ls-active';document.getElementById('ls4').textContent='⏳ 보장 추천 생성 중...';}
+  },1200);
+
+  var h={
+    name:name,phone:phone,mode:isT1?'검진서업로드':'설문작성',
+    age:isT1?'파일에서추출':document.getElementById('s-age').value,
+    gender:isT1?'파일에서추출':(gender==='m'?'남성':'여성'),
+    sh:!isT1?document.getElementById('s-h').value:'',
+    sw:!isT1?document.getElementById('s-w').value:'',
+    qBP:qA['bp']||'',qDM:qA['dm']||'',qCh:qA['ch']||'',
+    qSm:qA['sm']||'',qDr:qA['dr']||'',fams:fams.join(','),
+    memo:isT1?document.getElementById('u-memo').value:document.getElementById('s-memo').value
+  };
+
+  var messages=[];
+  if(isT1&&uploadedB64){
+    var content=[{type:'text',text:'당신은 메디에이지 건강분석 전문가입니다. 첨부 건강검진 확인서에서 모든 수치를 읽어 분석하고 JSON으로만 반환하세요 (코드블록 없이).\n고객명:'+h.name+'\n연락처:'+h.phone+'\n추가메모:'+h.memo+'\n\nJSON:\n{"bioAge":숫자,"realAge":숫자,"ageDiff":숫자,"gender":"남성|여성","organs":{"heart":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"liver":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"pancreas":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"kidney":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"body":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"}},"diseases":[{"name":"질병명","risk":숫자,"level":"고위험|위험|경고|경계|주의|보통|양호"}],"cancers":[{"name":"암종","risk":숫자,"level":"고위험|위험|경고|주의|양호"}],"medicalCost":{"nextYear":숫자,"nextYearAvg":숫자,"tenYear":숫자,"tenYearAvg":숫자,"lifetime":숫자,"lifetimeAvg":숫자},"recommendations":["맞춤보장추천 3~4가지 구체적으로"],"summary":"2~3문장종합소견"}\n질병9종:비만,고지혈증,고혈압,당뇨병,허혈심장질환,급성심근경색증,뇌혈관질환,뇌졸중,치매\n암10종:간암,담낭암,췌장암,위암,대장암,폐암,신장암,방광암,전립선암(남)/유방암(여),갑상선암'}];
+    if(uploadedType==='application/pdf'){content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:uploadedB64}});}
+    else{content.push({type:'image',source:{type:'base64',media_type:uploadedType,data:uploadedB64}});}
+    messages=[{role:'user',content:content}];
+  }else{
+    var age=document.getElementById('s-age').value;
+    var gen=gender==='m'?'남성':'여성';
+    messages=[{role:'user',content:'당신은 메디에이지 건강분석 전문가입니다. 다음 설문 정보로 분석하고 JSON으로만 반환하세요 (코드블록 없이).\n이름:'+h.name+'\n나이:'+age+'세\n성별:'+gen+'\n키:'+h.sh+'cm\n몸무게:'+h.sw+'kg\n혈압:'+h.qBP+'\n당뇨:'+h.qDM+'\n고지혈증:'+h.qCh+'\n흡연:'+h.qSm+'\n음주:'+h.qDr+'\n가족력:'+h.fams+'\n메모:'+h.memo+'\n\nJSON:\n{"bioAge":숫자,"realAge":'+age+',"ageDiff":숫자,"gender":"'+gen+'","organs":{"heart":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"liver":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"pancreas":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"kidney":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"},"body":{"age":숫자,"status":"좋음|보통|나쁨|매우나쁨"}},"diseases":[{"name":"질병명","risk":숫자,"level":"고위험|위험|경고|경계|주의|보통|양호"}],"cancers":[{"name":"암종","risk":숫자,"level":"고위험|위험|경고|주의|양호"}],"medicalCost":{"nextYear":숫자,"nextYearAvg":숫자,"tenYear":숫자,"tenYearAvg":숫자,"lifetime":숫자,"lifetimeAvg":숫자},"recommendations":["맞춤보장추천 3~4가지 구체적으로"],"summary":"2~3문장종합소견"}\n질병9종:비만,고지혈증,고혈압,당뇨병,허혈심장질환,급성심근경색증,뇌혈관질환,뇌졸중,치매\n암10종:간암,담낭암,췌장암,위암,대장암,폐암,신장암,방광암,'+(gen==='남성'?'전립선암':'유방암')+',갑상선암'}];
+  }
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:messages})
+  }).then(function(r){return r.json();}).then(function(data){
+    clearInterval(iv);
+    document.getElementById('loading-card').style.display='none';
+    document.getElementById('prog').style.width='100%';
+    var text=data.content.filter(function(i){return i.type==='text';}).map(function(i){return i.text;}).join('');
+    var result=JSON.parse(text.replace(/```json|```/g,'').trim());
+    if(result.gender)h.gender=result.gender;
+    if(result.realAge)h.age=result.realAge;
+    renderResult(result,h);
+    sendEmail(h,result);
+  }).catch(function(){
+    clearInterval(iv);
+    document.getElementById('loading-card').style.display='none';
+    document.getElementById('submit-btn').disabled=false;
+    alert('분석 중 오류가 발생했습니다. 다시 시도해 주세요.');
+  });
+}
+
+function sendEmail(h,r){
+  var s='[AI건강분석] '+h.name+' 고객 ('+h.mode+')';
+  var b='=== AI 건강검진 분석 결과 ===\n\n이름: '+h.name+'\n연락처: '+h.phone+'\n나이: '+h.age+'세 / '+h.gender+'\n방식: '+h.mode+'\n\n생체나이: '+r.bioAge+'세 (실제 '+h.age+'세, +'+r.ageDiff+'세)\n\n주요 위험 질환:\n';
+  r.diseases.forEach(function(d){if(d.level==='고위험'||d.level==='위험')b+='- '+d.name+': '+d.level+'\n';});
+  b+='\n맞춤 보장 추천:\n';r.recommendations.forEach(function(x){b+='- '+x+'\n';});
+  b+='\n종합 소견: '+r.summary;
+  window.open('mailto:hanadak1@gmail.com?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),'_blank');
+}
+
+function getOC(s){return s==='좋음'||s==='보통'?'os-g':s==='나쁨'?'os-b':'os-vb';}
+function getLvl(l){
+  if(l==='고위험'||l==='위험')return{bar:'df-r',badge:'db-r'};
+  if(l==='경고'||l==='경계')return{bar:'df-o',badge:'db-o'};
+  if(l==='주의'||l==='관심')return{bar:'df-b',badge:'db-b'};
+  return{bar:'df-g',badge:'db-g'};
+}
+function cf(n){return Math.round(n/10000).toLocaleString()+'만원';}
+
+function renderResult(r,h){
+  var rw=document.getElementById('result-wrap');
+  rw.style.display='block';
+  var organs=[{k:'heart',l:'심장나이'},{k:'liver',l:'간나이'},{k:'pancreas',l:'췌장나이'},{k:'kidney',l:'신장나이'},{k:'body',l:'체형나이'}];
+  var orgH=organs.map(function(o){var v=r.organs[o.k];return '<div class="organ-box"><div class="org-n">'+v.age+'</div><div class="org-l">'+o.l+'</div><div class="org-s '+getOC(v.status)+'">'+v.status+'</div></div>';}).join('');
+  var disH=r.diseases.map(function(d){var c=getLvl(d.level);return '<div class="dis-row"><div class="dis-name">'+d.name+'</div><div class="dis-track"><div class="dis-fill '+c.bar+'" data-w="'+Math.min(Math.abs(d.risk),100)+'" style="width:0%"></div></div><span class="dis-badge '+c.badge+'">'+d.level+'</span></div>';}).join('');
+  var canH=r.cancers.map(function(c){var cl=getLvl(c.level);return '<div class="cc"><div class="cc-name">'+c.name+'</div><div class="cc-track"><div class="cc-fill '+cl.bar+'" data-w="'+Math.min(Math.abs(c.risk),100)+'" style="width:0%"></div></div><span class="dis-badge '+cl.badge+'" style="font-size:10px">'+c.level+'</span></div>';}).join('');
+  var recH=r.recommendations.map(function(x){return '<div class="rec-item"><span class="rec-icon">🛡️</span><div class="rec-text">'+x+'</div></div>';}).join('');
+  var dc=r.ageDiff>3?'rgba(239,68,68,0.15)':'rgba(245,158,11,0.12)';
+  var dbc=r.ageDiff>3?'rgba(239,68,68,0.3)':'rgba(245,158,11,0.3)';
+  var dtc=r.ageDiff>3?'#f87171':'#fbbf24';
+  var displayAge=h.age||r.realAge;
+
+  rw.innerHTML='<div class="result-hero"><div class="result-inner">'
+  +'<div style="font-size:12px;color:#34d399;margin-bottom:.75rem">✅ AI 분석 완료 · '+h.name+' 고객 ('+h.mode+')</div>'
+  +'<div style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:1rem;line-height:1.6">'+r.summary+'</div>'
+  +'<div class="age-row"><div class="age-box ab-blue"><div class="age-n">'+displayAge+'</div><div class="age-l">실제 나이</div></div><span style="color:rgba(255,255,255,0.4);font-size:18px">→</span><div class="age-box ab-purple"><div class="age-n">'+r.bioAge+'</div><div class="age-l">생체나이</div></div><div style="background:'+dc+';border:1px solid '+dbc+';border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:'+dtc+'">+'+r.ageDiff+'세 노화</div></div>'
+  +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px">장기별 나이</div>'
+  +'<div class="organ-grid">'+orgH+'</div>'
+  +'</div></div>'
+  +'<div class="result-card"><div class="rc-title">🔬 질병 위험도 분석 (9종)</div><div class="dis-list">'+disH+'</div></div>'
+  +'<div class="result-card"><div class="rc-title">🩺 암 위험도 분석 (10종)</div><div class="cancer-grid">'+canH+'</div></div>'
+  +'<div class="result-card"><div class="rc-title">💰 예상 의료비</div><div class="cost-grid"><div class="cost-c"><div class="cost-l">내년도</div><div class="cost-n">'+cf(r.medicalCost.nextYear)+'</div><div class="cost-a">평균 '+cf(r.medicalCost.nextYearAvg)+'</div></div><div class="cost-c"><div class="cost-l">10년 누적</div><div class="cost-n">'+cf(r.medicalCost.tenYear)+'</div><div class="cost-a">평균 '+cf(r.medicalCost.tenYearAvg)+'</div></div><div class="cost-c"><div class="cost-l">생애 누적</div><div class="cost-n">'+cf(r.medicalCost.lifetime)+'</div><div class="cost-a">평균 '+cf(r.medicalCost.lifetimeAvg)+'</div></div></div></div>'
+  +'<div class="result-card"><div class="rc-title">🛡️ 꼭 필요한 보장 추천</div><div class="rec-list">'+recH+'</div></div>'
+  +'<div class="kakao-cta"><div style="font-size:11px;color:#34d399;margin-bottom:8px">✅ 분석 결과가 노진연 설계사에게 전달되었습니다</div><div style="color:#fff;font-size:16px;font-weight:700;margin-bottom:6px">맞춤 보험 상담 받아보세요</div><div style="color:rgba(255,255,255,0.6);font-size:13px">위 결과를 바탕으로 꼭 필요한 보장을 안내드립니다</div><a href="http://pf.kakao.com/_NSIxjX/chat" target="_blank"><button class="kakao-btn">💬 노진연 설계사와 상담하기</button></a></div>';
+
+  setTimeout(function(){document.querySelectorAll('.dis-fill,.cc-fill').forEach(function(b){b.style.width=b.dataset.w+'%';});},300);
+  rw.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
